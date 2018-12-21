@@ -1,3 +1,13 @@
+
+/* 
+ * Creates a new audio object and generates
+ * a bubble sound on card flip
+ */
+function playSound(type) {
+  let audio = new Audio(`assets/sounds/${type}.wav`);
+  audio.play();
+}
+
 /*
  *  Grabs data from a public JSON
  *  which is used for generating the content
@@ -87,6 +97,7 @@ function gameWin() {
 function cardsMatch(firstCard, secondCard) {
   firstCard.parentNode.className = "back matched";
   secondCard.parentNode.className = "back matched";
+  playSound('correct');
   matchedCards.push(firstCard, secondCard);
   if (matchedCards.length === numberOfCards) {
     gameWin();
@@ -112,7 +123,10 @@ function cardsNoMatch(firstCard, secondCard) {
  */
 function incrementMove() {
   moves++;
-  document.querySelector('.moves').innerText = moves;
+  let move;
+  for (move of document.querySelectorAll('.moves')) {
+    move.innerText = moves;
+  } 
 }
 
 /*
@@ -152,8 +166,8 @@ let matchedCards = [];
 let cardToggle = false;
 _DECK.addEventListener('click', (event) => {
   if (event.target !== event.currentTarget && event.target.nodeName === 'IMG') {
-    console.log(event.target);
     let card = event.target;
+    playSound('bubble');
     card.parentNode.parentNode.className = "content show";
     addOpenCardtoList(card);
   }

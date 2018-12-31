@@ -18,11 +18,7 @@ body {
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  font-family: 'VT323', monospace;
 }
 
 .pop-up {
@@ -58,7 +54,7 @@ body {
 }
 
 h1 {
-  font-family: 'Indie Flower', sans-serif;
+  font-family: 'VT323', monospace;
   font-weight: 300;
 }
 
@@ -68,7 +64,7 @@ h3 {
   font-weight: 400;
   letter-spacing: 1.2px;
   text-align: center;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'VT323', monospace;
 }
 
 /*
@@ -178,6 +174,14 @@ h3 {
   text-align: left;
   width: 345px;
   margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 30px;
+  border-bottom: 5px dashed pink;
+  min-width: 400px;
+  padding-left: 20px;
+  padding: 0px 20px 20px 20px;
 
   .stars {
     margin: 0;
@@ -193,6 +197,12 @@ h3 {
 
   .restart {
     float: right;
+    background-color: pink;
+    padding: 10px 15px;
+    color: white;
+    text-transform: uppercase;
+    font-size: 20px;
+    border-radius: 3px;
   }
 
 }

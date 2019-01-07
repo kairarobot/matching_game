@@ -1,20 +1,70 @@
+let popup = document.querySelector('.pop-up');
+let gameButton = document.querySelector('#game-button');
+let deck = document.querySelector('.deck');
+let time = document.querySelector('.time');
+updatePopUpContent('start');
 
 
 /*
  *
-*/
+ */
 function assignStars() {
-
 }
 
-function gameState(state) {
+function onGameStart() {
+  gameButton.addEventListener('click', () => {
+    startTimer();
+    deck.className = "deck hide-cover";
+    popup.className = "pop-up hidden";
+  });
+}
+
+function onGameEnd() {
+  updatePopUpContent('gameover');
+  deck.className = "deck";
+  popup.className = "pop-up";
+}
+
+/*
+ *  When number of initial cards is the same as the number
+ *  of cards that the player matched in the game
+ *  then turn on a game state for winning
+ */
+function onGameWin() {
+  onGameEnd();
+}
+
+function updateGameState(state) {
+  let gameState = {};
   switch (state) {
-    case 'start': break; 
-    case 'gameover': break; 
-    case 'restart': break; 
-      
+    case 'start':
+      gameState = { 'title': 'Start Game', 'subtitle': 'Match the right backgrounds together', 'button': 'Start' };
+      onGameStart();
+      break;
+    case 'gameover':
+      gameState = { 'title': 'Game Over', 'button': 'Restart' };
+      break;
+    case 'restart':
+      gameState = { 'title': 'Restart Game', 'subtitle': 'Are you sure you want to restart?', 'button': 'Restart' };
+      break;
+  }
+  return gameState;
+}
+
+function updatePopUpContent(state) {
+  for (let item of popup.childNodes) {
+    if (item.className) {
+      let gameState = updateGameState(state);
+      if (item.className === 'title')
+        item.innerText = gameState.title;
+      if (item.className === 'subtitle')
+        item.innerText = gameState.subtitle;
+      if (item.className === 'button')
+        item.innerText = gameState.button;
+    }
   }
 }
+
 
 /*
  *  Decreases the timer by 1 second starting from 60 seconds
@@ -23,20 +73,23 @@ function gameState(state) {
  *  @param  - Date, Date
  */
 let timer;
+
 function decreaseTimer(startTime, currentTime) {
-  if (Math.floor((startTime - currentTime)/ 1000) >= 0) {
-    let counter = Math.floor((startTime - currentTime)/ 1000);
-    document.querySelector('.time').innerText = counter;
+  if (Math.floor((startTime - currentTime) / 1000) >= 0) {
+    let counter = Math.floor((startTime - currentTime) / 1000);
+    time.innerText = counter;
+    if (Math.floor((startTime - currentTime) / 1000) == 0) {
+      onGameEnd();
+    }
   }
 }
-function startTimer () {
-  let startTime = Date.now() + (1000 * 31);
-    timer = setInterval( () => {
+
+function startTimer() {
+  let startTime = Date.now() + (1000 * 61);
+  timer = setInterval(() => {
     decreaseTimer(startTime, Date.now());
   }, 1000);
-
 }
-startTimer();
 
 /* 
  * Creates a new audio object and generates
@@ -53,6 +106,7 @@ function playSound(type) {
  *  of the cards
  */
 let numberOfCards;
+
 function grabCardContentData() {
   const contentURL = 'https://api.myjson.com/bins/67kng'
   fetch(contentURL)
@@ -71,13 +125,13 @@ function grabCardContentData() {
  */
 function grabCardContent() {
   let cards = [];
-    for (let i = 0; i < 8; i++) {
-      let file = `assets/landscapes/${i+1}.png`;
-      let type = `ng${i+1}`;
-      let card = { 'image': file , 'type': type };
-      cards.push(card);
-      cards.push(card);
-    }
+  for (let i = 0; i < 8; i++) {
+    let file = `assets/landscapes/${i+1}.png`;
+    let type = `ng${i+1}`;
+    let card = { 'image': file, 'type': type };
+    cards.push(card);
+    cards.push(card);
+  }
   cards = shuffle(cards);
   numberOfCards = cards.length;
   generateCards(cards);
@@ -93,7 +147,6 @@ grabCardContent();
 function generateCards(cards) {
   try {
     let frag = document.createDocumentFragment();
-    let deck = document.querySelector('.deck');
     let id = 0;
     for (c of cards) {
       let card = document.createElement("LI");
@@ -138,15 +191,6 @@ function shuffle(array) {
 }
 
 /*
- *  When number of initial cards is the same as the number
- *  of cards that the player matched in the game
- *  then turn on a game state for winning
- */
-function gameWin() {
-  console.log("congratulations motherfucker");
-}
-
-/*
  *  When cards do match
  *  then keep them open and mark that they are matched,
  *  add these cards to a list of matched cards,
@@ -158,7 +202,7 @@ function cardsMatch(firstCard, secondCard) {
   playSound('correct');
   matchedCards.push(firstCard, secondCard);
   if (matchedCards.length === numberOfCards) {
-    gameWin();
+    onGameWin();
   }
   openCards = [];
 }
@@ -184,7 +228,7 @@ function incrementMove() {
   let move;
   for (move of document.querySelectorAll('.moves')) {
     move.innerText = moves;
-  } 
+  }
 }
 
 /*
@@ -236,6 +280,7 @@ _DECK.addEventListener('click', (event) => {
  *  over again in the game
  */
 document.querySelector('.button').addEventListener('click', () => { resetGame() });
+
 function resetGame() {
   moves = 0;
   document.querySelector('.moves').innerText = moves;

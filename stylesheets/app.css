@@ -32,7 +32,7 @@ body {
   background-attachment: fixed;
 }
 
-/* line 30, ../sass/app.scss */
+/* line 31, ../sass/app.scss */
 .pop-up {
   position: absolute;
   margin: 0 auto;
@@ -42,23 +42,38 @@ body {
   transform: scale(1);
   transition: transform 0.4s;
   min-height: 150px;
-  padding: 10px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   /*
-   &:hover {
-     visibility: show;
-     transform: scale(1.0);
-   }
-   */
+  &:hover {
+    visibility: show;
+    transform: scale(1.0);
+  }
+  */
+}
+/* line 45, ../sass/app.scss */
+.pop-up.hidden {
+  visibility: hidden;
+}
+/* line 55, ../sass/app.scss */
+.pop-up .subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  text-align: center;
+  margin: 0px 10px 20px 10px;
 }
 
-/* line 49, ../sass/app.scss */
+/* line 64, ../sass/app.scss */
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
-/* line 55, ../sass/app.scss */
+/* line 70, ../sass/app.scss */
 .container.container-endgame {
   position: absolute;
   width: 100%;
@@ -68,13 +83,13 @@ body {
   opacity: 0.8;
 }
 
-/* line 65, ../sass/app.scss */
+/* line 80, ../sass/app.scss */
 h1 {
   font-family: 'VT323', monospace;
   font-weight: 300;
 }
 
-/* line 70, ../sass/app.scss */
+/* line 85, ../sass/app.scss */
 h3 {
   text-transform: uppercase;
   font-size: 14px;
@@ -87,7 +102,7 @@ h3 {
 /*
  * Styles for the deck of cards
  */
-/* line 82, ../sass/app.scss */
+/* line 97, ../sass/app.scss */
 .deck {
   width: 600px;
   min-height: 680px;
@@ -100,7 +115,7 @@ h3 {
   padding: 0;
   padding: 20px;
 }
-/* line 94, ../sass/app.scss */
+/* line 109, ../sass/app.scss */
 .deck .card {
   overflow: hidden;
   height: 125px;
@@ -114,7 +129,7 @@ h3 {
   align-items: center;
   perspective: 1000px;
 }
-/* line 107, ../sass/app.scss */
+/* line 122, ../sass/app.scss */
 .deck .card .content {
   position: relative;
   width: 100%;
@@ -123,11 +138,11 @@ h3 {
   transition: transform 1s;
   transform-style: preserve-3d;
 }
-/* line 115, ../sass/app.scss */
+/* line 130, ../sass/app.scss */
 .deck .card .content.show {
   transform: rotateY(180deg);
 }
-/* line 119, ../sass/app.scss */
+/* line 134, ../sass/app.scss */
 .deck .card .content .front,
 .deck .card .content .back {
   position: absolute;
@@ -135,12 +150,12 @@ h3 {
   height: 100%;
   backface-visibility: hidden;
 }
-/* line 126, ../sass/app.scss */
+/* line 141, ../sass/app.scss */
 .deck .card .content .front.matched,
 .deck .card .content .back.matched {
   position: relative;
 }
-/* line 129, ../sass/app.scss */
+/* line 144, ../sass/app.scss */
 .deck .card .content .front.matched:after,
 .deck .card .content .back.matched:after {
   content: 'MATCHED';
@@ -156,31 +171,31 @@ h3 {
   justify-content: center;
   align-items: center;
 }
-/* line 146, ../sass/app.scss */
+/* line 161, ../sass/app.scss */
 .deck .card .content .front {
   background-color: dodgerblue;
   color: black;
 }
-/* line 151, ../sass/app.scss */
+/* line 166, ../sass/app.scss */
 .deck .card .content .back {
   color: white;
   transform: rotateY(180deg);
 }
-/* line 155, ../sass/app.scss */
+/* line 170, ../sass/app.scss */
 .deck .card .content .back img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-/* line 160, ../sass/app.scss */
+/* line 175, ../sass/app.scss */
 .deck .card .content .back img:active {
   border: 5px solid white;
 }
-/* line 169, ../sass/app.scss */
+/* line 184, ../sass/app.scss */
 .deck .card:hover .content {
   transform: rotateY(180deg);
 }
-/* line 175, ../sass/app.scss */
+/* line 190, ../sass/app.scss */
 .deck:after {
   position: absolute;
   width: 100%;
@@ -191,11 +206,15 @@ h3 {
   margin: 0 0 3em;
   border-radius: 10px;
 }
+/* line 202, ../sass/app.scss */
+.deck.hide-cover:after {
+  display: none;
+}
 
 /*
  * Styles for the Score Panel
  */
-/* line 190, ../sass/app.scss */
+/* line 211, ../sass/app.scss */
 .button {
   float: right;
   background-color: pink;
@@ -205,12 +224,12 @@ h3 {
   font-size: 20px;
   border-radius: 3px;
 }
-/* line 199, ../sass/app.scss */
+/* line 220, ../sass/app.scss */
 .button:active {
   background-color: dodgerblue;
 }
 
-/* line 204, ../sass/app.scss */
+/* line 225, ../sass/app.scss */
 .score-panel {
   text-align: left;
   width: 345px;
@@ -224,14 +243,14 @@ h3 {
   padding-left: 20px;
   padding: 0px 20px 20px 20px;
 }
-/* line 217, ../sass/app.scss */
+/* line 238, ../sass/app.scss */
 .score-panel .stars {
   margin: 0;
   padding: 0;
   display: inline-block;
   margin: 0 5px 0 0;
 }
-/* line 223, ../sass/app.scss */
+/* line 244, ../sass/app.scss */
 .score-panel .stars li {
   list-style: none;
   display: inline-block;

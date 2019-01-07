@@ -27,23 +27,38 @@ body {
   background-attachment: fixed;
 }
 
+
 .pop-up {
   position: absolute;
   margin: 0 auto;
   top: 40%;
   width: 300px;
   background: wheat;
-  transform: scale(1.0);
+  transform: scale(1);
   transition: transform 0.4s;
   min-height: 150px;
-  padding: 10px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
- /*
+  &.hidden {
+    visibility: hidden;
+  }
+
+  /*
   &:hover {
     visibility: show;
     transform: scale(1.0);
   }
   */
+  .subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-align: center;
+    margin: 0px 10px 20px 10px;
+  }
 }
 
 .container {
@@ -181,6 +196,12 @@ h3 {
     padding: 32px;
     margin: 0 0 3em;
     border-radius: 10px;
+  }
+
+  &.hide-cover {
+    &:after {
+      display: none;
+    }
   }
 }
 

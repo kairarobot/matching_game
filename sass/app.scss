@@ -11,14 +11,20 @@ html {
 html,
 body {
   width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
   cursor: url('../assets/cursor/cursor.png'), auto;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   font-family: 'VT323', monospace;
+  min-height: 100%;
+  background-image: linear-gradient(#fff1f1, #dcd0ef);
+  background-attachment: fixed;
 }
 
 .pop-up {
@@ -27,14 +33,17 @@ body {
   top: 40%;
   width: 300px;
   background: wheat;
-  transform: scale(0.2);
+  transform: scale(1.0);
   transition: transform 0.4s;
-  visibility: hidden;
+  min-height: 150px;
+  padding: 10px;
 
+ /*
   &:hover {
     visibility: show;
     transform: scale(1.0);
   }
+  */
 }
 
 .container {
@@ -71,15 +80,16 @@ h3 {
  * Styles for the deck of cards
  */
 .deck {
-  width: 660px;
+  width: 600px;
   min-height: 680px;
-  padding: 32px;
-  border-radius: 10px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   margin: 0 0 3em;
+  position: relative;
+  padding: 0;
+  padding: 20px;
 
   .card {
     overflow: hidden;
@@ -139,7 +149,6 @@ h3 {
       }
 
       .back {
-        background-color: dodgerblue;
         color: white;
         transform: rotateY(180deg);
 
@@ -162,13 +171,35 @@ h3 {
       }
     }
   }
+
+  &:after {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    content: '';
+    background-color: #d9dffff5;
+    padding: 32px;
+    margin: 0 0 3em;
+    border-radius: 10px;
+  }
 }
-
-
 
 /*
  * Styles for the Score Panel
  */
+.button {
+  float: right;
+  background-color: pink;
+  padding: 10px 15px;
+  color: white;
+  text-transform: uppercase;
+  font-size: 20px;
+  border-radius: 3px;
+
+  &:active {
+    background-color: dodgerblue;
+  }
+}
 
 .score-panel {
   text-align: left;
@@ -194,15 +225,4 @@ h3 {
       display: inline-block;
     }
   }
-
-  .restart {
-    float: right;
-    background-color: pink;
-    padding: 10px 15px;
-    color: white;
-    text-transform: uppercase;
-    font-size: 20px;
-    border-radius: 3px;
-  }
-
 }

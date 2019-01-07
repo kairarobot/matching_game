@@ -1,4 +1,43 @@
 
+
+/*
+ *
+*/
+function assignStars() {
+
+}
+
+function gameState(state) {
+  switch (state) {
+    case 'start': break; 
+    case 'gameover': break; 
+    case 'restart': break; 
+      
+  }
+}
+
+/*
+ *  Decreases the timer by 1 second starting from 60 seconds
+ *  by subtracting the current time from the time
+ *  when the page is loaded
+ *  @param  - Date, Date
+ */
+let timer;
+function decreaseTimer(startTime, currentTime) {
+  if (Math.floor((startTime - currentTime)/ 1000) >= 0) {
+    let counter = Math.floor((startTime - currentTime)/ 1000);
+    document.querySelector('.time').innerText = counter;
+  }
+}
+function startTimer () {
+  let startTime = Date.now() + (1000 * 31);
+    timer = setInterval( () => {
+    decreaseTimer(startTime, Date.now());
+  }, 1000);
+
+}
+startTimer();
+
 /* 
  * Creates a new audio object and generates
  * a bubble sound on card flip
@@ -24,7 +63,26 @@ function grabCardContentData() {
       generateCards(cards);
     })
 }
-grabCardContentData();
+
+/*
+ *  Grabs data from assets folder 'assets/'
+ *  which is used for generating the content
+ *  of the cards
+ */
+function grabCardContent() {
+  let cards = [];
+    for (let i = 0; i < 8; i++) {
+      let file = `assets/landscapes/${i+1}.png`;
+      let type = `ng${i+1}`;
+      let card = { 'image': file , 'type': type };
+      cards.push(card);
+      cards.push(card);
+    }
+  cards = shuffle(cards);
+  numberOfCards = cards.length;
+  generateCards(cards);
+}
+grabCardContent();
 
 /*
  *  Generates and displays the cards
@@ -177,13 +235,16 @@ _DECK.addEventListener('click', (event) => {
  *  Resets the game if the player wants to start
  *  over again in the game
  */
-document.querySelector('.restart').addEventListener('click', () => { resetGame() });
+document.querySelector('.button').addEventListener('click', () => { resetGame() });
 function resetGame() {
   moves = 0;
+  document.querySelector('.moves').innerText = moves;
   openCards = [];
   matchedCards = [];
   while (_DECK.firstChild) {
     _DECK.firstChild.remove();
   }
   grabCardContentData();
+  clearTimeout(timer);
+  startTimer();
 }

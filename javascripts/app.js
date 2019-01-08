@@ -2,41 +2,48 @@ let popup = document.querySelector('.pop-up');
 let gameButton = document.querySelector('#game-button');
 let deck = document.querySelector('.deck');
 let time = document.querySelector('.time');
-let moves = document.querySelectorAll('.moves');
+let moves = document.querySelector('.moves');
 
-updatePopUpContent('start');
+// starts up the game
+updateGameState("start"); 
 
 /*
- *  When number of initial cards is the same as the number
- *  of cards that the player matched in the game
- *  then turn on a game state for winning
+ *  Assign stickers to the player based on
+ *  how fast they completed the game
  */
-function assignStars(gameState) {
+function assignStickers() {
   let timeStamp = time.innerText;
+  if (timeStamp > 40)
+    createStickers("star", 3)
+  else if (timeStamp > 25 && timeStamp <= 40)
+    createStickers("star", 2)
+  else if (timeStamp > 0 && timeStamp <= 25)
+    createStickers("star", 1)
+  else
+    createStickers("banana", 1)
+}
+
+/*
+ *  Helper method for assigning stickers
+ *  which creates stickers
+ *  @param  - String, Number
+ */
+function createStickers(type, amount) {
+  let sticker = document.createElement("IMG");
   let subtitle = document.querySelector('.subtitle');
-  let starImage = document.createElement("IMG");
-  starImage.src = "assets/score/star.png";
-  let star2, star3 = starImage.cloneNode(true);
-  let bananaImage = document.createElement("IMG");
-  bananaImage.src = "assets/score/banana.png";
-  if (timeStamp > 40) {
-    subtitle.appendChild(starImage);
-    subtitle.appendChild(star2);
-    subtitle.appendChild(star3);
-  } else if (timeStamp > 25 && timeStamp <= 40) {
-    subtitle.appendChild(starImage);
-    subtitle.appendChild(star2);
-  } else if (timeStamp > 0 && timeStamp <= 25) {
-    subtitle.appendChild(starImage);
-  } else {
-    subtitle.appendChild(bananaImage);
+  if (type === "star")
+    sticker.src = "assets/score/star.png";
+  else
+    sticker.src = "assets/score/banana.png";
+  for (let i = 0; i < amount; i++) {
+    subtitle.appendChild(sticker);
+    if (i > 0)
+      subtitle.appendChild(sticker.cloneNode(true));
   }
 }
 
 /*
- *  When number of initial cards is the same as the number
- *  of cards that the player matched in the game
- *  then turn on a game state for winning
+ *  Setup method for on game start
  */
 function onGameStart() {
   gameButton.addEventListener('click', () => {
@@ -49,64 +56,61 @@ function onGameStart() {
 }
 
 /*
- *  When number of initial cards is the same as the number
- *  of cards that the player matched in the game
- *  then turn on a game state for winning
+ *  Setup method for on game end
  */
 function onGameEnd() {
-  shouldStart = false;
-  updatePopUpContent('gameover');
+  clearInterval(timer);
   deck.className = "deck";
   popup.className = "pop-up";
+  assignStickers();
 }
 
 /*
- *  When number of initial cards is the same as the number
- *  of cards that the player matched in the game
- *  then turn on a game state for winning
- */
-function onGameWin() {
-  onGameEnd();
-}
-
-/*
- *  When number of initial cards is the same as the number
- *  of cards that the player matched in the game
- *  then turn on a game state for winning
+ *  Updates the game state of the game, this is called
+ *  whenever a change is needed in the state
+ *  @param  - String
  */
 function updateGameState(state) {
-  let gameState = {};
+  let gameState = { title: '', subtitle: '', button: '' };
   switch (state) {
     case 'start':
-      gameState = { 'title': 'Start Game', 'subtitle': 'Match the right backgrounds together', 'button': 'Start' };
+      gameState = {
+        title: 'Start Game',
+        subtitle: 'Match the right backgrounds together',
+        button: 'Start'
+      };
+      updatePopUpContent(gameState);
       onGameStart();
       break;
     case 'gameover':
-      gameState = { 'title': 'Game Over', 'subtitle': '', 'button': 'Restart' };
-      assignStars(gameState);
-      break;
-    case 'restart':
-      gameState = { 'title': 'Restart Game', 'subtitle': 'Are you sure you want to restart?', 'button': 'Restart' };
+      gameState = {
+        title: 'Game Over',
+        subtitle: '',
+        button: 'Restart'
+      };
+      updatePopUpContent(gameState);
+      onGameEnd();
       break;
   }
-  return gameState;
 }
 
 /*
- *  When number of initial cards is the same as the number
- *  of cards that the player matched in the game
- *  then turn on a game state for winning
+ *  Updates the content inside the pop-up which
+ *  only appears on game start or game over
+ *  @param  - Object
  */
-function updatePopUpContent(state) {
+function updatePopUpContent(gameState) {
   for (let item of popup.childNodes) {
-    if (item.className) {
-      let gameState = updateGameState(state);
-      if (item.className === 'title')
+    switch (item.className) {
+      case 'title':
         item.innerText = gameState.title;
-      if (item.className === 'subtitle')
+        break;
+      case 'subtitle':
         item.innerText = gameState.subtitle;
-      if (item.className === 'button')
+        break;
+      case 'button':
         item.innerText = gameState.button;
+        break;
     }
   }
 }
@@ -122,22 +126,22 @@ function decreaseTimer(startTime, currentTime) {
     let counter = Math.floor((startTime - currentTime) / 1000);
     time.innerText = counter;
     if (Math.floor((startTime - currentTime) / 1000) == 0) {
-      onGameEnd();
+      updateGameState("gameover");
     }
   }
 }
-let shouldStart = false;
 let timer = 0;
 function startTimer() {
   let startTime = Date.now() + (1000 * 61);
   timer = setInterval(() => {
-    if (shouldStart) decreaseTimer(startTime, Date.now());
+    decreaseTimer(startTime, Date.now());
   }, 1000);
 }
 
 /* 
  * Creates a new audio object and generates
  * a bubble sound on card flip
+ *  @param  - String
  */
 function playSound(type) {
   let audio = new Audio(`assets/sounds/${type}.wav`);
@@ -150,13 +154,12 @@ function playSound(type) {
  *  of the cards
  */
 let numberOfCards;
-
 function grabCardContent() {
   let cards = [];
   for (let i = 0; i < 8; i++) {
-    let file = `assets/landscapes/${i+1}.png`;
+    let image = `assets/landscapes/${i+1}.png`;
     let type = `ng${i+1}`;
-    let card = { 'image': file, 'type': type };
+    let card = { image, type };
     cards.push(card);
     cards.push(card);
   }
@@ -164,7 +167,6 @@ function grabCardContent() {
   numberOfCards = cards.length;
   generateCards(cards);
 }
-grabCardContent();
 
 /*
  *  Generates and displays the cards
@@ -177,18 +179,23 @@ function generateCards(cards) {
     let frag = document.createDocumentFragment();
     let id = 0;
     for (c of cards) {
+      // Create the HTML elements
       let card = document.createElement("LI");
       let content = document.createElement("DIV");
       let front = document.createElement("DIV");
       let back = document.createElement("DIV");
       let image = document.createElement("IMG");
+
+      // Attach attributes to HTML elements
       card.className = "card";
       content.className = "content";
       front.className = "front";
       back.className = "back";
-      image.src = c.image;
       image.id = id;
+      image.src = c.image;
       image.setAttribute('type', c.type);
+
+      // Temporarily append HTML elements to a fragment
       back.appendChild(image);
       content.append(back, front);
       card.appendChild(content);
@@ -230,7 +237,7 @@ function cardsMatch(firstCard, secondCard) {
   playSound('correct');
   matchedCards.push(firstCard, secondCard);
   if (matchedCards.length === numberOfCards) {
-    onGameWin();
+    updateGameState("gameover");
   }
   openCards = [];
 }
@@ -302,8 +309,9 @@ _DECK.addEventListener('click', (event) => {
 }, false);
 
 /*
- *  Resets the game if the player wants to start
- *  over again in the game
+ *  Creates a new game if the player wants to start
+ *  over again. This is activated in the beginning
+ *  of the game and also at game over.
  */
 function newGame() {
   playerMoves = 0;
@@ -313,7 +321,6 @@ function newGame() {
   while (_DECK.firstChild) {
     _DECK.firstChild.remove();
   }
-  shouldStart = true;
   grabCardContent();
   clearInterval(timer);
   startTimer();

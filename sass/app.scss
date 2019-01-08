@@ -58,6 +58,11 @@ body {
     letter-spacing: 4px;
     text-align: center;
     margin: 0px 10px 20px 10px;
+
+    img {
+      max-width: 30px;
+      max-height: 30px;
+    }
   }
 }
 
@@ -224,10 +229,9 @@ h3 {
 
 .score-panel {
   text-align: left;
-  width: 345px;
   margin-bottom: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   font-size: 30px;
   border-bottom: 5px dashed pink;

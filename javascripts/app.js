@@ -2,24 +2,59 @@ let popup = document.querySelector('.pop-up');
 let gameButton = document.querySelector('#game-button');
 let deck = document.querySelector('.deck');
 let time = document.querySelector('.time');
+let moves = document.querySelectorAll('.moves');
+
 updatePopUpContent('start');
 
-
 /*
- *
+ *  When number of initial cards is the same as the number
+ *  of cards that the player matched in the game
+ *  then turn on a game state for winning
  */
-function assignStars() {
+function assignStars(gameState) {
+  let timeStamp = time.innerText;
+  let subtitle = document.querySelector('.subtitle');
+  let starImage = document.createElement("IMG");
+  starImage.src = "assets/score/star.png";
+  let star2, star3 = starImage.cloneNode(true);
+  let bananaImage = document.createElement("IMG");
+  bananaImage.src = "assets/score/banana.png";
+  if (timeStamp > 40) {
+    subtitle.appendChild(starImage);
+    subtitle.appendChild(star2);
+    subtitle.appendChild(star3);
+  } else if (timeStamp > 25 && timeStamp <= 40) {
+    subtitle.appendChild(starImage);
+    subtitle.appendChild(star2);
+  } else if (timeStamp > 0 && timeStamp <= 25) {
+    subtitle.appendChild(starImage);
+  } else {
+    subtitle.appendChild(bananaImage);
+  }
 }
 
+/*
+ *  When number of initial cards is the same as the number
+ *  of cards that the player matched in the game
+ *  then turn on a game state for winning
+ */
 function onGameStart() {
   gameButton.addEventListener('click', () => {
+    clearInterval(timer);
     startTimer();
     deck.className = "deck hide-cover";
     popup.className = "pop-up hidden";
+    newGame();
   });
 }
 
+/*
+ *  When number of initial cards is the same as the number
+ *  of cards that the player matched in the game
+ *  then turn on a game state for winning
+ */
 function onGameEnd() {
+  shouldStart = false;
   updatePopUpContent('gameover');
   deck.className = "deck";
   popup.className = "pop-up";
@@ -34,6 +69,11 @@ function onGameWin() {
   onGameEnd();
 }
 
+/*
+ *  When number of initial cards is the same as the number
+ *  of cards that the player matched in the game
+ *  then turn on a game state for winning
+ */
 function updateGameState(state) {
   let gameState = {};
   switch (state) {
@@ -42,7 +82,8 @@ function updateGameState(state) {
       onGameStart();
       break;
     case 'gameover':
-      gameState = { 'title': 'Game Over', 'button': 'Restart' };
+      gameState = { 'title': 'Game Over', 'subtitle': '', 'button': 'Restart' };
+      assignStars(gameState);
       break;
     case 'restart':
       gameState = { 'title': 'Restart Game', 'subtitle': 'Are you sure you want to restart?', 'button': 'Restart' };
@@ -51,6 +92,11 @@ function updateGameState(state) {
   return gameState;
 }
 
+/*
+ *  When number of initial cards is the same as the number
+ *  of cards that the player matched in the game
+ *  then turn on a game state for winning
+ */
 function updatePopUpContent(state) {
   for (let item of popup.childNodes) {
     if (item.className) {
@@ -65,15 +111,12 @@ function updatePopUpContent(state) {
   }
 }
 
-
 /*
  *  Decreases the timer by 1 second starting from 60 seconds
  *  by subtracting the current time from the time
  *  when the page is loaded
  *  @param  - Date, Date
  */
-let timer;
-
 function decreaseTimer(startTime, currentTime) {
   if (Math.floor((startTime - currentTime) / 1000) >= 0) {
     let counter = Math.floor((startTime - currentTime) / 1000);
@@ -83,11 +126,12 @@ function decreaseTimer(startTime, currentTime) {
     }
   }
 }
-
+let shouldStart = false;
+let timer = 0;
 function startTimer() {
   let startTime = Date.now() + (1000 * 61);
   timer = setInterval(() => {
-    decreaseTimer(startTime, Date.now());
+    if (shouldStart) decreaseTimer(startTime, Date.now());
   }, 1000);
 }
 
@@ -101,28 +145,12 @@ function playSound(type) {
 }
 
 /*
- *  Grabs data from a public JSON
+ *  Grabs data from assets folder 'assets/'
  *  which is used for generating the content
  *  of the cards
  */
 let numberOfCards;
 
-function grabCardContentData() {
-  const contentURL = 'https://api.myjson.com/bins/67kng'
-  fetch(contentURL)
-    .then(data => data.json())
-    .then(response => {
-      let cards = shuffle(response);
-      numberOfCards = cards.length;
-      generateCards(cards);
-    })
-}
-
-/*
- *  Grabs data from assets folder 'assets/'
- *  which is used for generating the content
- *  of the cards
- */
 function grabCardContent() {
   let cards = [];
   for (let i = 0; i < 8; i++) {
@@ -223,12 +251,11 @@ function cardsNoMatch(firstCard, secondCard) {
  *  a player has made everytime they
  *  try to match card together
  */
+let playerMoves = 0;
+
 function incrementMove() {
-  moves++;
-  let move;
-  for (move of document.querySelectorAll('.moves')) {
-    move.innerText = moves;
-  }
+  playerMoves++;
+  moves.innerText = playerMoves;
 }
 
 /*
@@ -262,7 +289,6 @@ function addOpenCardtoList(card) {
  *  and then calls a function that appends the card
  */
 let _DECK = document.querySelector('.deck');
-let moves = 0;
 let openCards = [];
 let matchedCards = [];
 let cardToggle = false;
@@ -279,17 +305,16 @@ _DECK.addEventListener('click', (event) => {
  *  Resets the game if the player wants to start
  *  over again in the game
  */
-document.querySelector('.button').addEventListener('click', () => { resetGame() });
-
-function resetGame() {
-  moves = 0;
-  document.querySelector('.moves').innerText = moves;
+function newGame() {
+  playerMoves = 0;
   openCards = [];
   matchedCards = [];
+  moves.innerText = playerMoves;
   while (_DECK.firstChild) {
     _DECK.firstChild.remove();
   }
-  grabCardContentData();
-  clearTimeout(timer);
+  shouldStart = true;
+  grabCardContent();
+  clearInterval(timer);
   startTimer();
 }
